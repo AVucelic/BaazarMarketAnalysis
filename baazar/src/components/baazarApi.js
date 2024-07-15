@@ -5,41 +5,84 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-class baazarApi extends Component {
+class BaazarApi extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-        items: []
+            products: {},
+            isLoading: true,
+            error: null
         };
     }
-    
+
     componentDidMount() {
-        axios.get('https://baazarapi.herokuapp.com/api/items')
-        .then(res => {
-            this.setState({ items: res.data });
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+        axios.get('https://api.hypixel.net/v2/skyblock/bazaar')
+            .then(res => {
+                console.log(res.data); // Log the response data
+                this.setState({ products: res.data.products, isLoading: false });
+            })
+            .catch(error => {
+                console.log(error);
+                this.setState({ error, isLoading: false });
+            });
     }
-    
+
     render() {
+        const { products, isLoading, error } = this.state;
+        if (isLoading) {
+            return <div>Loading...</div>;
+        }
+        if (error) {
+            return <div>Error: {error.message}</div>;
+        }
         return (
-        <div>
-            {this.state.items.map(item =>
-            <Card key={item.id}>
-                <CardContent>
-                <h2>{item.name}</h2>
-                <p>{item.description}</p>
-                <p>Price: {item.price}</p>
-                </CardContent>
-                <CardActions>
-                <button>Buy</button>
-                </CardActions>
-            </Card>
-            )}
-        </div>
+            <div>
+                {Object.keys(products).map(productId => {
+                    const product = products[productId];
+                    const sellSummary = product.sell_summary;
+                    const buySummary = product.buy_summary;
+                    const quickStatus = product.quick_status;
+
+                    return (
+                        <Card key={productId}>
+                            <CardContent>
+                                <h2>{productId}</h2>
+                                <h3>Sell Summary:</h3>
+                                {sellSummary.map((sell, index) => (
+                                    <div key={index}>
+                                        <p>Amount: {sell.amount}</p>
+                                        <p>Price per Unit: {sell.pricePerUnit}</p>
+                                        <p>Orders: {sell.orders}</p>
+                                    </div>
+                                ))}
+                                <h3>Buy Summary:</h3>
+                                {buySummary.map((buy, index) => (
+                                    <div key={index}>
+                                        <p>Amount: {buy.amount}</p>
+                                        <p>Price per Unit: {buy.pricePerUnit}</p>
+                                        <p>Orders: {buy.orders}</p>
+                                    </div>
+                                ))}
+                                <h3>Quick Status:</h3>
+                                <div>
+                                    <p>Sell Price: {quickStatus.sellPrice}</p>
+                                    <p>Sell Volume: {quickStatus.sellVolume}</p>
+                                    <p>Sell Orders: {quickStatus.sellOrders}</p>
+                                    <p>Buy Price: {quickStatus.buyPrice}</p>
+                                    <p>Buy Volume: {quickStatus.buyVolume}</p>
+                                    <p>Buy Orders: {quickStatus.buyOrders}</p>
+                                </div>
+                            </CardContent>
+                            <CardActions>
+                                <button>Buy</button>
+                            </CardActions>
+                        </Card>
+                    );
+                })}
+            </div>
         );
     }
 }
+
+export default BaazarApi;
