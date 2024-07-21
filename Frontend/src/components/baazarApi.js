@@ -22,7 +22,6 @@ class BaazarApi extends Component {
         this.interval = null;  
     }
 
-    // Method to fetch data
     fetchData = () => {
         axios.get(`https://api.hypixel.net/v2/skyblock/bazaar?key=${API_KEY}`)
             .then(res => {
