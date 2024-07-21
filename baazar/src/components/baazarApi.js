@@ -14,7 +14,8 @@ class BaazarApi extends Component {
             products: {},
             productNames: {},
             isLoading: true,
-            error: null
+            error: null,
+            visibleItems: 10 // Number of items initially visible
         };
     }
 
@@ -41,23 +42,33 @@ class BaazarApi extends Component {
             });
     }
 
+    // Handler to show more items
+    showMoreItems = () => {
+        this.setState(prevState => ({
+            visibleItems: prevState.visibleItems + 10 // Increase visible items by 10
+        }));
+    }
+
     render() {
-        const { products, productNames, isLoading, error } = this.state;
+        const { products, productNames, isLoading, error, visibleItems } = this.state;
+
         if (isLoading) {
             return <div>Loading...</div>;
         }
         if (error) {
             return <div>Error: {error.message}</div>;
         }
+
+        // Get the list of product IDs and limit it based on visibleItems
+        const productIds = Object.keys(products).filter(productId =>
+            !productId.startsWith('ENCHANTMENT') && !productId.startsWith('ESSENCE')
+        );
+        const visibleProductIds = productIds.slice(0, visibleItems);
+
         return (
             <div className="products-container">
-                {Object.keys(products).map(productId => {
-                    if (productId.startsWith('ENCHANTMENT') || productId.startsWith('ESSENCE')) {
-                        return null;
-                    }
+                {visibleProductIds.map(productId => {
                     const product = products[productId];
-                    const sellSummary = product.sell_summary;
-                    const buySummary = product.buy_summary;
                     const quickStatus = product.quick_status;
                     const productName = productNames[productId] || productId;
 
@@ -66,7 +77,7 @@ class BaazarApi extends Component {
                             <CardContent>
                                 <h2>{productName}</h2>
                                 <h3>Quick Status:</h3>
-                                <div>
+                                <div className="quick-status">
                                     <p>Sell Price: {quickStatus.sellPrice}</p>
                                     <p>Sell Volume: {quickStatus.sellVolume}</p>
                                     <p>Sell Orders: {quickStatus.sellOrders}</p>
@@ -81,6 +92,13 @@ class BaazarApi extends Component {
                         </Card>
                     );
                 })}
+                {visibleProductIds.length < productIds.length && (
+                    <div className="show-more-container">
+                        <button className="show-more-button" onClick={this.showMoreItems}>
+                            Show more items
+                        </button>
+                    </div>
+                )}
             </div>
         );
     }

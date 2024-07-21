@@ -79,3 +79,23 @@
     margin: 0;
     font-size: 14px;
 }
+
+.show-more-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.show-more-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.show-more-button:hover {
+    background-color: var(--button-hover-color);
+}
