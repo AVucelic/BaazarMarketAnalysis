@@ -5,7 +5,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-const API_KEY = '202ac6ab-0414-465c-8c7c-b976bad32f74';
+const API_KEY = '27a7a87a-3ed9-4831-a2de-dc7fbb014b9f';
 
 class BaazarApi extends Component {
     constructor(props) {
@@ -19,9 +19,11 @@ class BaazarApi extends Component {
             sortOrder: 'desc', 
             sortKey: 'sellPrice' 
         };
+        this.interval = null;  
     }
 
-    componentDidMount() {
+    // Method to fetch data
+    fetchData = () => {
         axios.get(`https://api.hypixel.net/v2/skyblock/bazaar?key=${API_KEY}`)
             .then(res => {
                 this.setState({ products: res.data.products });
@@ -42,6 +44,17 @@ class BaazarApi extends Component {
                 console.error(error);
                 this.setState({ error, isLoading: false });
             });
+    }
+
+    componentDidMount() {
+        this.fetchData(); 
+        this.interval = setInterval(this.fetchData, 60000); 
+    }
+
+    componentWillUnmount() {
+        if (this.interval) {
+            clearInterval(this.interval); 
+        }
     }
 
     showMoreItems = () => {
@@ -80,7 +93,7 @@ class BaazarApi extends Component {
         return (
             <div>
                 <div className="sort-dropdown-container">
-                <span>Sort By: </span>
+                    <span>Sort By: </span>
                     <select className="sort-dropdown" onChange={this.handleSortChange}>
                         <option value="sellPrice,desc">Sell Price (Descending)</option>
                         <option value="sellPrice,asc">Sell Price (Ascending)</option>
