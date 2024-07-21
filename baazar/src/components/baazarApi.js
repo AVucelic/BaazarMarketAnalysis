@@ -8,7 +8,6 @@ import CardActions from '@mui/material/CardActions';
 const API_KEY = '202ac6ab-0414-465c-8c7c-b976bad32f74';
 
 class BaazarApi extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -20,15 +19,12 @@ class BaazarApi extends Component {
     }
 
     componentDidMount() {
-        // Fetch product data from Hypixel Bazaar
         axios.get(`https://api.hypixel.net/v2/skyblock/bazaar?key=${API_KEY}`)
             .then(res => {
                 this.setState({ products: res.data.products });
                 return axios.get(`https://api.hypixel.net/v2/resources/skyblock/items?key=${API_KEY}`);
             })
             .then(res => {
-                console.log('Product names response:', res.data); 
-
                 if (res.data && Array.isArray(res.data.items)) {
                     const productNames = {};
                     res.data.items.forEach(item => {
@@ -56,6 +52,9 @@ class BaazarApi extends Component {
         return (
             <div className="products-container">
                 {Object.keys(products).map(productId => {
+                    if (productId.startsWith('ENCHANTMENT') || productId.startsWith('ESSENCE')) {
+                        return null;
+                    }
                     const product = products[productId];
                     const sellSummary = product.sell_summary;
                     const buySummary = product.buy_summary;

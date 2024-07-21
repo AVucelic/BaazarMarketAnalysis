@@ -1,31 +1,54 @@
-/* General container for the product cards */
+:root {
+    --primary-color: #4A90E2;
+    --secondary-color: #50E3C2;
+    --background-color: #F0EFF4; /* Light grey background color for the container */
+    --card-background-color: #F4F0EF; /* Light brownish-purple background color for cards */
+    --text-color: #333333; /* Dark text color for readability */
+    --text-secondary-color: #666666; /* Secondary text color for less emphasis */
+    --button-hover-color: #357ABD; /* Darker shade for button hover effect */
+    --quick-status-background: #f9f9f9; /* Very light grey background for quick status section */
+    --border-color: #eeeeee; /* Light border color for separation */
+}
+
 .products-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px; /* space between the cards */
-    justify-content: center; /* center the cards */
+    gap: 16px;
+    justify-content: center;
     padding: 16px;
+    background-color: var(--background-color); /* Background color for the container */
+    margin: 0;
+    box-sizing: border-box;
 }
 
-/* Individual product card styling */
 .product-card {
-    width: 300px; /* fixed width for all cards */
+    width: 300px;
     margin: 16px;
-    border-radius: 8px; /* rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* subtle shadow */
-    overflow: hidden; /* ensures child elements don't overflow */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background-color: var(--card-background-color) !important; /* Background color for each card */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .product-card h2, .product-card h3 {
     margin: 16px 0 8px;
+    color: var(--text-color);
+    font-weight: 600;
 }
 
 .product-card p {
     margin: 4px 0;
+    color: var(--text-secondary-color);
 }
 
 .product-card button {
-    background-color: #007bff; /* primary button color */
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -35,9 +58,24 @@
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
-    border-radius: 4px; /* rounded button corners */
+    border-radius: 4px;
+    transition: background-color 0.2s;
 }
 
 .product-card button:hover {
-    background-color: #0056b3; /* darker shade for hover */
+    background-color: var(--button-hover-color);
+}
+
+.product-card .quick-status {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    background-color: var(--quick-status-background);
+    border-top: 1px solid var(--border-color);
+}
+
+.product-card .quick-status p {
+    margin: 0;
+    font-size: 14px;
 }
