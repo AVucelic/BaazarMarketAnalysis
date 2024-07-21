@@ -15,7 +15,9 @@ class BaazarApi extends Component {
             productNames: {},
             isLoading: true,
             error: null,
-            visibleItems: 10 // Number of items initially visible
+            visibleItems: 10,
+            sortOrder: 'desc', 
+            sortKey: 'sellPrice' 
         };
     }
 
@@ -42,15 +44,19 @@ class BaazarApi extends Component {
             });
     }
 
-    // Handler to show more items
     showMoreItems = () => {
         this.setState(prevState => ({
-            visibleItems: prevState.visibleItems + 10 // Increase visible items by 10
+            visibleItems: prevState.visibleItems + 10
         }));
     }
 
+    handleSortChange = (event) => {
+        const [key, order] = event.target.value.split(',');
+        this.setState({ sortKey: key, sortOrder: order });
+    }
+
     render() {
-        const { products, productNames, isLoading, error, visibleItems } = this.state;
+        const { products, productNames, isLoading, error, visibleItems, sortOrder, sortKey } = this.state;
 
         if (isLoading) {
             return <div>Loading...</div>;
@@ -59,46 +65,67 @@ class BaazarApi extends Component {
             return <div>Error: {error.message}</div>;
         }
 
-        // Get the list of product IDs and limit it based on visibleItems
         const productIds = Object.keys(products).filter(productId =>
             !productId.startsWith('ENCHANTMENT') && !productId.startsWith('ESSENCE')
         );
-        const visibleProductIds = productIds.slice(0, visibleItems);
+
+        const sortedProductIds = productIds.sort((a, b) => {
+            const valueA = products[a].quick_status[sortKey];
+            const valueB = products[b].quick_status[sortKey];
+            return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+        });
+
+        const visibleProductIds = sortedProductIds.slice(0, visibleItems);
 
         return (
-            <div className="products-container">
-                {visibleProductIds.map(productId => {
-                    const product = products[productId];
-                    const quickStatus = product.quick_status;
-                    const productName = productNames[productId] || productId;
+            <div>
+                <div className="sort-dropdown-container">
+                <span>Sort By: </span>
+                    <select className="sort-dropdown" onChange={this.handleSortChange}>
+                        <option value="sellPrice,desc">Sell Price (Descending)</option>
+                        <option value="sellPrice,asc">Sell Price (Ascending)</option>
+                        <option value="buyPrice,desc">Buy Price (Descending)</option>
+                        <option value="buyPrice,asc">Buy Price (Ascending)</option>
+                        <option value="sellVolume,desc">Sell Volume (Descending)</option>
+                        <option value="sellVolume,asc">Sell Volume (Ascending)</option>
+                        <option value="buyVolume,desc">Buy Volume (Descending)</option>
+                        <option value="buyVolume,asc">Buy Volume (Ascending)</option>
+                    </select>
+                </div>
+                <div className="products-container">
+                    {visibleProductIds.map(productId => {
+                        const product = products[productId];
+                        const quickStatus = product.quick_status;
+                        const productName = productNames[productId] || productId;
 
-                    return (
-                        <Card key={productId} className="product-card">
-                            <CardContent>
-                                <h2>{productName}</h2>
-                                <h3>Quick Status:</h3>
-                                <div className="quick-status">
-                                    <p>Sell Price: {quickStatus.sellPrice}</p>
-                                    <p>Sell Volume: {quickStatus.sellVolume}</p>
-                                    <p>Sell Orders: {quickStatus.sellOrders}</p>
-                                    <p>Buy Price: {quickStatus.buyPrice}</p>
-                                    <p>Buy Volume: {quickStatus.buyVolume}</p>
-                                    <p>Buy Orders: {quickStatus.buyOrders}</p>
-                                </div>
-                            </CardContent>
-                            <CardActions>
-                                <button>Show graph</button>
-                            </CardActions>
-                        </Card>
-                    );
-                })}
-                {visibleProductIds.length < productIds.length && (
-                    <div className="show-more-container">
-                        <button className="show-more-button" onClick={this.showMoreItems}>
-                            Show more items
-                        </button>
-                    </div>
-                )}
+                        return (
+                            <Card key={productId} className="product-card">
+                                <CardContent>
+                                    <h2>{productName}</h2>
+                                    <h3>Quick Status:</h3>
+                                    <div className="quick-status">
+                                        <p>Sell Price: {quickStatus.sellPrice.toFixed(1)}</p>
+                                        <p>Sell Volume: {quickStatus.sellVolume}</p>
+                                        <p>Sell Orders: {quickStatus.sellOrders}</p>
+                                        <p>Buy Price: {quickStatus.buyPrice.toFixed(1)}</p>
+                                        <p>Buy Volume: {quickStatus.buyVolume}</p>
+                                        <p>Buy Orders: {quickStatus.buyOrders}</p>
+                                    </div>
+                                </CardContent>
+                                <CardActions>
+                                    <button>Show graph</button>
+                                </CardActions>
+                            </Card>
+                        );
+                    })}
+                    {visibleProductIds.length < productIds.length && (
+                        <div className="show-more-container">
+                            <button className="show-more-button" onClick={this.showMoreItems}>
+                                Show more items
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         );
     }
