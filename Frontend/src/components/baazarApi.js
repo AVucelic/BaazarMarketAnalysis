@@ -5,8 +5,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 
-const API_KEY = '27a7a87a-3ed9-4831-a2de-dc7fbb014b9f';
-
 class BaazarApi extends Component {
     constructor(props) {
         super(props);
@@ -16,43 +14,35 @@ class BaazarApi extends Component {
             isLoading: true,
             error: null,
             visibleItems: 10,
-            sortOrder: 'desc', 
-            sortKey: 'sellPrice' 
+            sortOrder: 'desc',
+            sortKey: 'sellPrice'
         };
-        this.interval = null;  
+        this.interval = null;
     }
 
     fetchData = () => {
-        axios.get(`https://api.hypixel.net/v2/skyblock/bazaar?key=${API_KEY}`)
+        axios.get('http://localhost:8000/api/bazaar-data/')
             .then(res => {
-                this.setState({ products: res.data.products });
-                return axios.get(`https://api.hypixel.net/v2/resources/skyblock/items?key=${API_KEY}`);
-            })
-            .then(res => {
-                if (res.data && Array.isArray(res.data.items)) {
-                    const productNames = {};
-                    res.data.items.forEach(item => {
-                        productNames[item.id] = item.name;
-                    });
-                    this.setState({ productNames, isLoading: false });
-                } else {
-                    throw new Error('Invalid format for product names response');
-                }
+                this.setState({
+                    products: res.data.products,
+                    productNames: res.data.productNames,
+                    isLoading: false
+                });
             })
             .catch(error => {
-                console.error(error);
+                console.error('Error fetching data:', error);
                 this.setState({ error, isLoading: false });
             });
     }
 
     componentDidMount() {
-        this.fetchData(); 
-        this.interval = setInterval(this.fetchData, 60000); 
+        this.fetchData();
+        this.interval = setInterval(this.fetchData, 60000); // Refresh every 60 seconds
     }
 
     componentWillUnmount() {
         if (this.interval) {
-            clearInterval(this.interval); 
+            clearInterval(this.interval);
         }
     }
 

@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from .views import fetch_bazaar_data
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('api/bazaar-data/', fetch_bazaar_data, name='fetch_bazaar_data'),
 ]
