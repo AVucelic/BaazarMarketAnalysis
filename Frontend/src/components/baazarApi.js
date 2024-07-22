@@ -23,21 +23,18 @@ class BaazarApi extends Component {
     fetchData = () => {
         axios.get('http://localhost:8000/api/bazaar-data/')
             .then(res => {
-                this.setState({
-                    products: res.data.products,
-                    productNames: res.data.productNames,
-                    isLoading: false
-                });
+                const { products, productNames } = res.data;
+                this.setState({ products, productNames, isLoading: false });
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error(error);
                 this.setState({ error, isLoading: false });
             });
     }
 
     componentDidMount() {
         this.fetchData();
-        this.interval = setInterval(this.fetchData, 60000); // Refresh every 60 seconds
+        this.interval = setInterval(this.fetchData, 60000);
     }
 
     componentWillUnmount() {
@@ -67,9 +64,7 @@ class BaazarApi extends Component {
             return <div>Error: {error.message}</div>;
         }
 
-        const productIds = Object.keys(products).filter(productId =>
-            !productId.startsWith('ENCHANTMENT') && !productId.startsWith('ESSENCE')
-        );
+        const productIds = Object.keys(products);
 
         const sortedProductIds = productIds.sort((a, b) => {
             const valueA = products[a].quick_status[sortKey];
