@@ -1,4 +1,3 @@
-# myapp/management/commands/fetch_bazaar_data.py
 import requests
 from django.core.management.base import BaseCommand
 from myapp.models import Product

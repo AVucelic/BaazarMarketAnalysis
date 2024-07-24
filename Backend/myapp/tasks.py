@@ -1,6 +1,5 @@
 from celery_app import app
 import requests
-from django.conf import settings
 from myapp.models import Product
 
 API_KEY = '27a7a87a-3ed9-4831-a2de-dc7fbb014b9f'

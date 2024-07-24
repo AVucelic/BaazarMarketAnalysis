@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from celery import Celery
+from celery.schedules import crontab
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -80,12 +82,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'Backend', 'db.sqlite3'),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -156,16 +160,16 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+CELERY_BEAT_MAX_LOOP_INTERVAL = 60  # Check for due tasks every 1 minute
 
 CELERY_BEAT_SCHEDULE = {
-    'fetch-bazaar-data-every-5-minutes': {
+    'fetch-bazaar-data-every-minute': {
         'task': 'myapp.tasks.fetch_bazaar_data',
-        'schedule': 60.0,  # 60 seconds
+        'schedule': crontab(minute='*/1'),  # Runs every minute
     },
 }
+
 CELERY_RESULT_BACKEND = 'django-db'
-
-
 CELERY_APP = Celery('../celery_app.py')
 CELERY_APP.config_from_object('django.conf:settings', namespace='CELERY')
 CELERY_APP.autodiscover_tasks()
