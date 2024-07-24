@@ -1,11 +1,11 @@
-from celery import shared_task
+from celery_app import app
 import requests
 from django.conf import settings
 from myapp.models import Product
 
 API_KEY = '27a7a87a-3ed9-4831-a2de-dc7fbb014b9f'
 
-@shared_task
+@app.task
 def fetch_bazaar_data():
     # Fetch products data
     products_response = requests.get(f'https://api.hypixel.net/v2/skyblock/bazaar?key={API_KEY}')

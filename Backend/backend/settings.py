@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+from celery import Celery
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +42,8 @@ INSTALLED_APPS = [
     'myapp',
     'rest_framework',
     'django_celery_beat',
+    'django_celery_results',
+
 ]
 
 MIDDLEWARE = [
@@ -145,6 +149,7 @@ CORS_ALLOW_HEADERS = [
     'content-type',
     'authorization',
 ]
+
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
@@ -155,6 +160,12 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_BEAT_SCHEDULE = {
     'fetch-bazaar-data-every-5-minutes': {
         'task': 'myapp.tasks.fetch_bazaar_data',
-        'schedule': 300.0,  # 5 minutes
+        'schedule': 60.0,  # 60 seconds
     },
 }
+CELERY_RESULT_BACKEND = 'django-db'
+
+
+CELERY_APP = Celery('../celery_app.py')
+CELERY_APP.config_from_object('django.conf:settings', namespace='CELERY')
+CELERY_APP.autodiscover_tasks()
