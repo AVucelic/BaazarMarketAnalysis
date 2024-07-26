@@ -138,11 +138,13 @@ CORS_ALLOW_HEADERS = [
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'UTC'
 CELERY_BEAT_MAX_LOOP_INTERVAL = 60  # Check for due tasks every 1 minute
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 
 CELERY_BEAT_SCHEDULE = {
     'fetch-bazaar-data-every-minute': {
