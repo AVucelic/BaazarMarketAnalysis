@@ -1,17 +1,19 @@
-# myapp/models.py
-# myapp/models.py
-
 from django.db import models
 
 class Product(models.Model):
-    product_id = models.CharField(max_length=255, unique=True)
-    name = models.CharField(max_length=255)
-    sell_price = models.FloatField()
-    sell_volume = models.IntegerField()
-    buy_price = models.FloatField()
-    buy_volume = models.IntegerField()
-    sell_orders = models.IntegerField()
-    buy_orders = models.IntegerField()
+    product_id = models.CharField(max_length=255, unique=True, verbose_name="Product ID")
+    name = models.CharField(max_length=255, verbose_name="Product Name")
+    sell_price = models.FloatField(verbose_name="Sell Price")
+    sell_volume = models.IntegerField(verbose_name="Sell Volume")
+    buy_price = models.FloatField(verbose_name="Buy Price")
+    buy_volume = models.IntegerField(verbose_name="Buy Volume")
+    sell_orders = models.IntegerField(verbose_name="Sell Orders")
+    buy_orders = models.IntegerField(verbose_name="Buy Orders")
 
     def __str__(self):
-        return self.name
+        return f'{self.name} ({self.product_id})'
+
+    class Meta:
+        verbose_name = "Product"
+        verbose_name_plural = "Products"
+        ordering = ['name']

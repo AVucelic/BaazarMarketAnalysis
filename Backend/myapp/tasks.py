@@ -2,7 +2,7 @@ from celery_app import app
 import requests
 from myapp.models import Product
 
-API_KEY = '27a7a87a-3ed9-4831-a2de-dc7fbb014b9f'
+API_KEY = '2c2b8b5d-4850-4b91-b0d3-6e74679cf12c'
 
 @app.task
 def fetch_bazaar_data():
@@ -25,7 +25,7 @@ def fetch_bazaar_data():
         if product_id.startswith('ENCHANTMENT') or product_id.startswith('ESSENCE'):
             continue
 
-        quick_status = product['quick_status']
+        quick_status = product.get('quick_status', {})
         product_name = product_names.get(product_id, product_id)
 
         # Update or create product in the database
@@ -33,11 +33,11 @@ def fetch_bazaar_data():
             product_id=product_id,
             defaults={
                 'name': product_name,
-                'sell_price': quick_status['sellPrice'],
-                'sell_volume': quick_status['sellVolume'],
-                'sell_orders': quick_status['sellOrders'],
-                'buy_price': quick_status['buyPrice'],
-                'buy_volume': quick_status['buyVolume'],
-                'buy_orders': quick_status['buyOrders']
+                'sell_price': quick_status.get('sellPrice', 0),
+                'sell_volume': quick_status.get('sellVolume', 0),
+                'sell_orders': quick_status.get('sellOrders', 0),
+                'buy_price': quick_status.get('buyPrice', 0),
+                'buy_volume': quick_status.get('buyVolume', 0),
+                'buy_orders': quick_status.get('buyOrders', 0)
             }
         )
