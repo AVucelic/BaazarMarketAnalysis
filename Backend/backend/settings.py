@@ -69,9 +69,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'Backend', 'db.sqlite3'),
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -142,13 +143,15 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'UTC'
-CELERY_BEAT_MAX_LOOP_INTERVAL = 60  # Check for due tasks every 1 minute
+CELERY_BEAT_MAX_LOOP_INTERVAL = 60
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 
 CELERY_BEAT_SCHEDULE = {
     'fetch-bazaar-data-every-minute': {
         'task': 'myapp.tasks.fetch_bazaar_data',
-        'schedule': crontab(minute='*/1'),  # Runs every minute
+        'schedule': crontab(minute='*/1'),
     },
 }
