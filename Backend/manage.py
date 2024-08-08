@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #arian
 #arianic1
 """Django's command-line utility for administrative tasks."""
