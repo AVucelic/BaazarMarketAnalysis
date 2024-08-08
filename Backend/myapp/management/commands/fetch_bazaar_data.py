@@ -8,25 +8,27 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Fetching bazaar data...')
         
-        API_KEY = '27a7a87a-3ed9-4831-a2de-dc7fbb014b9f'
+        API_KEY = '08511e18-0f4e-4985-93b5-4ff3ab863010'
         
-        # Fetch products data
-        products_response = requests.get(f'https://api.hypixel.net/v2/skyblock/bazaar?key={API_KEY}')
-        if products_response.status_code != 200:
-            self.stdout.write('Failed to fetch products data.')
+        try:
+            # Fetch products data
+            products_response = requests.get(f'https://api.hypixel.net/v2/skyblock/bazaar?key={API_KEY}')
+            products_response.raise_for_status()
+            products_data = products_response.json().get('products', {})
+        except requests.RequestException as e:
+            self.stdout.write(f'Error fetching products data: {e}')
             return
         
-        products_data = products_response.json().get('products', {})
-        
-        # Fetch product names
-        names_response = requests.get(f'https://api.hypixel.net/v2/resources/skyblock/items?key={API_KEY}')
-        if names_response.status_code != 200:
-            self.stdout.write('Failed to fetch product names.')
+        try:
+            # Fetch product names
+            names_response = requests.get(f'https://api.hypixel.net/v2/resources/skyblock/items?key={API_KEY}')
+            names_response.raise_for_status()
+            names_data = names_response.json().get('items', [])
+            product_names = {item['id']: item['name'] for item in names_data}
+        except requests.RequestException as e:
+            self.stdout.write(f'Error fetching product names: {e}')
             return
         
-        names_data = names_response.json().get('items', [])
-        product_names = {item['id']: item['name'] for item in names_data}
-
         # Update or create products in the database
         for product_id, product_data in products_data.items():
             if product_id.startswith('ENCHANTMENT') or product_id.startswith('ESSENCE'):

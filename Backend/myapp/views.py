@@ -5,7 +5,7 @@ from django.http import JsonResponse
 # Configure logging
 logger = logging.getLogger(__name__)
 
-API_KEY = '27a7a87a-3ed9-4831-a2de-dc7fbb014b9f'
+API_KEY = '08511e18-0f4e-4985-93b5-4ff3ab863010'
 
 def bazaar_data(request):
     try:
