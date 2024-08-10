@@ -123,6 +123,8 @@ CELERY_BEAT_MAX_LOOP_INTERVAL = 60
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_IGNORE_RESULT = False
+CELERY_TASK_TRACK_STARTED = True
 
 CELERY_BEAT_SCHEDULE = {
     'fetch-bazaar-data-every-minute': {

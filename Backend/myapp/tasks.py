@@ -45,3 +45,11 @@ def fetch_bazaar_data():
         )
     
     return 'Data fetch complete.'
+
+
+
+from celery import shared_task
+
+@shared_task
+def test_task():
+    print("Test task executed!")
