@@ -1,6 +1,7 @@
 from celery import shared_task
+from celery.result import AsyncResult
 import requests
-
+import time
 from myapp.models import Product
 
 @shared_task
@@ -46,10 +47,20 @@ def fetch_bazaar_data():
     
     return 'Data fetch complete.'
 
-
-
-from celery import shared_task
-
 @shared_task
 def test_task():
     print("Test task executed!")
+
+def run_and_monitor_task(task, *args, **kwargs):
+    result = task.delay(*args, **kwargs)
+    while True:
+        result = AsyncResult(result.id)
+        print(result.status)
+        if result.successful() or result.failed():
+            break
+        time.sleep(1)
+    return result
+
+# Example usage
+if __name__ == '__main__':
+    run_and_monitor_task(fetch_bazaar_data)
