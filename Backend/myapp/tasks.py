@@ -58,7 +58,7 @@ def run_and_monitor_task(task, *args, **kwargs):
         print(result.status)
         if result.successful() or result.failed():
             break
-        time.sleep(1)
+        time.sleep(100)
     return result
 
 # Example usage
