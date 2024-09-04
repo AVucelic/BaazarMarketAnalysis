@@ -3,6 +3,8 @@ from celery.result import AsyncResult
 import requests
 import time
 from myapp.models import Product
+from myapp.tasks import test_task
+
 
 @shared_task
 def fetch_bazaar_data():
@@ -51,6 +53,7 @@ def fetch_bazaar_data():
 def test_task():
     print("Test task executed!")
 
+
 def run_and_monitor_task(task, *args, **kwargs):
     result = task.delay(*args, **kwargs)
     while True:
@@ -58,9 +61,8 @@ def run_and_monitor_task(task, *args, **kwargs):
         print(result.status)
         if result.successful() or result.failed():
             break
-        time.sleep(100)
+        time.sleep(1)
     return result
 
 # Example usage
-if __name__ == '__main__':
-    run_and_monitor_task(fetch_bazaar_data)
+run_and_monitor_task(test_task)

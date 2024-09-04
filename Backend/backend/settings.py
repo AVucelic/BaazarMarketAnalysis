@@ -119,6 +119,23 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+# Celery Configuration
+CELERY_BEAT_MAX_LOOP_INTERVAL = 60
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_IGNORE_RESULT = False
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TRACK_STARTED = True
+
+
+CELERY_BEAT_SCHEDULE = {
+    'fetch-bazaar-data-every-minute': {
+        'task': 'myapp.tasks.fetch_bazaar_data',
+        'schedule': crontab(minute='*/1'),
+    },
+}
 CELERY_BEAT_MAX_LOOP_INTERVAL = 60
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
