@@ -3,12 +3,11 @@ from celery.result import AsyncResult
 import requests
 import time
 from myapp.models import Product
-from myapp.tasks import test_task
 
 
 @shared_task
 def fetch_bazaar_data():
-    API_KEY = '08511e18-0f4e-4985-93b5-4ff3ab863010'
+    API_KEY = 'c847389e-00bb-4ff9-9e5f-daf36cff7f61'
     
     # Fetch products data
     products_response = requests.get(f'https://api.hypixel.net/v2/skyblock/bazaar?key={API_KEY}')
@@ -52,6 +51,7 @@ def fetch_bazaar_data():
 @shared_task
 def test_task():
     print("Test task executed!")
+    return "Task completed"
 
 
 def run_and_monitor_task(task, *args, **kwargs):
@@ -64,5 +64,6 @@ def run_and_monitor_task(task, *args, **kwargs):
         time.sleep(1)
     return result
 
-# Example usage
-run_and_monitor_task(test_task)
+if __name__ == "__main__":
+    run_and_monitor_task(fetch_bazaar_data)
+    run_and_monitor_task(test_task)
