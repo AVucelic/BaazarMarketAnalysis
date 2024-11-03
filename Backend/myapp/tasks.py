@@ -2,13 +2,18 @@ from celery import shared_task
 from celery.result import AsyncResult
 import requests
 import time
+import os
+from dotenv import load_dotenv
 from myapp.models import Product
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Get API key from environment variable
+API_KEY = os.getenv('API_KEY')
 
 @shared_task
 def fetch_bazaar_data():
-    API_KEY = 'c847389e-00bb-4ff9-9e5f-daf36cff7f61'
-    
     # Fetch products data
     products_response = requests.get(f'https://api.hypixel.net/v2/skyblock/bazaar?key={API_KEY}')
     if products_response.status_code != 200:
@@ -52,7 +57,6 @@ def fetch_bazaar_data():
 def test_task():
     print("Test task executed!")
     return "Task completed"
-
 
 def run_and_monitor_task(task, *args, **kwargs):
     result = task.delay(*args, **kwargs)

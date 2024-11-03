@@ -1,10 +1,16 @@
 import logging
 import requests
 from django.http import JsonResponse
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-API_KEY = 'c847389e-00bb-4ff9-9e5f-daf36cff7f61'
+# Get API key from environment variable
+API_KEY = os.getenv('API_KEY')
 
 def bazaar_data(request):
     try:

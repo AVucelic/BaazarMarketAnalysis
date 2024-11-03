@@ -1,14 +1,21 @@
 from celery import shared_task
 import requests
 import logging
+import os
+from dotenv import load_dotenv
 from myapp.models import Product
+
+# Load environment variables from .env file
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 @shared_task
 def fetch_bazaar_data():
     logger.info("Starting fetch_bazaar_data task")
-    API_KEY = 'c847389e-00bb-4ff9-9e5f-daf36cff7f61'
+    
+    # Get API key from environment variable
+    API_KEY = os.getenv('API_KEY')
     
     # Fetch products data
     products_response = requests.get(f'https://api.hypixel.net/v2/skyblock/bazaar?key={API_KEY}')
